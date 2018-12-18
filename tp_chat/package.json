@@ -1,0 +1,20 @@
+{
+    "name": "mon-app",
+    "version": "0.1.0",
+    "dependencies": {
+        "audio-loader": "^1.0.3",
+        "audio-play": "^2.2.1",
+        "ejs": "^2.6.1",
+        "ent": "^2.2.0",
+        "express": "^4.16.4",
+        "express-favicon": "^2.0.1",
+        "favicon": "0.0.2",
+        "markdown": "~0.4",
+        "morgan": "^1.9.1",
+        "play-sound": "^1.1.2",
+        "readimage": "^1.1.1",
+        "serve-favicon": "^2.5.0",
+        "socket.io": "^2.2.0",
+        "twig": "^1.12.0"
+    }
+}

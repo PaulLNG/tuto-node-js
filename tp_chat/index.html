@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Socket.io</title>
+    </head>
+ 
+    <body>
+        <h1>Voici un chat en temps réel !</h1>
+        
+        <p>
+        <input type="text" placeholder="Entrer votre message" id="messageTchat" />
+        <input type="button" value="Envoyer le message" id="sendMessage" />
+        </p>
+        
+        <p>
+        <input type="text" placeholder="Entrer votre nouveau pseudo" id="newPseudo" />
+        <input type="button" value="Changer votre pseudo" id="validateNewPseudo" />
+        </p>
+
+        <p>
+        <input type="button" value="DING DING" id="dingding" />
+        <audio id="audio" src="/son.wav" ></audio>
+        </p>
+        
+        <p>
+        <input id="linkImage" type="file" accept="image/*,.pdf">
+        <input type="button" value="Envoyer l'image" id="sendImage" />
+        </p>
+        <p> Le tchat : </p>
+        <div id="tchat">
+        
+        
+        
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+        
+	        var socket = io.connect('http://localhost:8080');
+	        
+	        var pseudo = prompt('Quel est votre pseudo ?');
+	        socket.emit('newUser', pseudo);
+	        
+	        $('#tchat').prepend(' <p> <em> Vous (' + pseudo + ') venez de vous connecter au chat... </em> </p>');
+			
+	        $('#dingding').click(function () {
+	        	
+	        	$('#tchat').prepend(' <p> <em> Vous avez lancé la musique dans le tchat... </em> </p>');
+                return false;
+            })
+            
+            $('#sendImage').click(function () {
+	        	alert($("#linkImage").val());
+	        	$('#tchat').prepend(" <p> <em> Quelqu\'un a envoyé une image : <img src='" + $("#linkImage").name + "' </em> </p>");
+                return false;
+            })
+	        
+	        $('#sendMessage').click(function () {
+            	var message = $('#messageTchat').val();
+            	
+                socket.emit('sendMessage', message);
+            	
+            	$('#messageTchat').val('').focus();
+                
+                return false;
+            })
+            
+            // Récupération du pseudo actuel pour l'affichage du message que l'utilisateur vient d'envoyer
+            // (on récupère le pseudo car l'utilisateur a pu le changer entre temps)
+                socket.on('viewMessageForUser', function(data) { 
+                
+                $('#tchat').prepend('<p> <em> Vous ('+ data.pseudo + ') : ' + data.message + '</em> </p>');  
+               
+                });  
+            
+            $('#validateNewPseudo').click(function () {
+            	var newPseudo = $('#newPseudo').val();
+                socket.emit('changePseudo', newPseudo);
+                $('#newPseudo').val('').focus();
+                $('#tchat').prepend('<p> <em> Vous vous êtes renommé en ' + newPseudo + ' (ancien pseudo : ' + pseudo + ')</em> </p>');
+                return false;
+            })
+            
+            socket.on('newUserTchat', function(newUserMessage) {
+            
+            $('#tchat').prepend(newUserMessage);
+            
+            /* Deuxième façon d'ajouter une ligne */
+            /* var newLine = document.createElement("p");
+            newLine.innerHTML = newUserMessage;
+            $('#tchat').append(newLine); */
+            /* $('#messageTchat').val(newUserMessage);    */
+            
+	    	});
+            
+			socket.on('viewMessageForOther', function(message) {
+                
+                $('#tchat').prepend(message); 
+            });
+			
+			
+			/* socket.on('image', function(message) {
+                alert(message);
+                $('#tchat').prepend(message); 
+            }); */
+			
+			socket.on('changePseudoText', function(message) {
+                
+                $('#tchat').prepend(message); 
+            });
+			
+			/* socket.on('changePseudoTextOher', function(message) {
+                
+                $('#tchat').prepend(message); 
+            }); */
+			
+			socket.on('userLeave', function(message) {
+                
+                $('#tchat').prepend(message); 
+            });
+	            
+        </script>
+    </body>
+</html>
