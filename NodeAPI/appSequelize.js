@@ -1,3 +1,12 @@
+// IMPORT EN JS DE BASE
+
+//import Article from '../models/Article.js';
+
+//const a = require("./models/Article")
+//module.exports = { a, b: 2 }
+
+
+
 //L'application requiert l'utilisation du module Express.
 //La variable express nous permettra d'utiliser les fonctionnalités du module Express.  
 var express = require('express'); 
@@ -27,7 +36,6 @@ const sequelize = new Sequelize('nodeapi', 'root', 'root', {
   
 });
 
-
 //Or you can simply use a connection uri
 //const sequelize = new Sequelize('postgres://user:pass@example.com:5432/dbname');
 
@@ -44,17 +52,19 @@ sequelize
 //MODEL BDD
 
 // On déclare on objet Piscine avec ses attributs
-const Piscine = sequelize.define('piscine', {
-	  ville: {
-	    type: Sequelize.STRING
-	  },
-	  nom: {
-	    type: Sequelize.STRING
-	  },
-	  directeur: {
-		    type: Sequelize.STRING
-		  }
-	});
+//const Piscine = sequelize.define('piscine', {
+//	  ville: {
+//	    type: Sequelize.STRING
+//	  },
+//	  nom: {
+//	    type: Sequelize.STRING
+//	  },
+//	  directeur: {
+//		    type: Sequelize.STRING
+//		  }
+//	});
+
+const Piscine = sequelize.import(__dirname + "/models/piscine")
 
 //// force: true will drop the table if it already exists
 //Piscine.sync({force: true}).then(() => {
@@ -97,13 +107,22 @@ myRouter.route('/piscines')
 		 methode : req.method });
 	
 	let ville = req.query.ville;
+	let id = req.body.id;
 	
-	Piscine.findAll().then(piscines => {
-		  console.log(piscines)
-		})
+//	Piscine.findAll().then(piscines => {
+//		  console.log(piscines)
+//		})
 	
-	Piscine.findOne().then(piscine => {
-		  console.log(piscine.get('nom'));
+//	Piscine.findOne().then(piscine => {
+//		  console.log(piscine.get('nom'));
+//		});
+	
+	Piscine.findOne({
+		where: {
+			id : id
+		}
+	}).then(piscine => {
+		  console.log(piscine);
 		});
 
 })
