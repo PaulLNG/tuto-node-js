@@ -3,15 +3,15 @@ const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
 	  return sequelize.define("piscine", {
-		  ville: {
+		  username: {
 			    type: Sequelize.STRING
 			  },
-			  nom: {
-			    type: Sequelize.STRING
-			  },
-			  directeur: {
-				    type: Sequelize.STRING
-				  }
+		  password: {
+		    type: Sequelize.STRING
+		  },
+		  local_key: {
+			    type: Sequelize.STRING , allowNull: true, defaultValue: null 
+			  }
 	  })
 	}
 

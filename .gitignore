@@ -6,3 +6,4 @@ npm-debug.*
 *.key
 *.mobileprovision
 NodeAPI/node_modules/**/*
+NodeForAll/node_modules/**/*
