@@ -1,4 +1,10 @@
-var app = require('express')();
+var express = require('express');
+//Nous créons un objet de type Express. 
+var app = express(); 
+
+// Méthode rapide pour création d'un objet de type Express
+//var app = require('express')();
+
 const bodyParser = require('body-parser');
 var db = require('./models/index');
 var myRouter = express.Router();
@@ -6,15 +12,12 @@ var myRouter = express.Router();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const User = db.import(__dirname + "/models/user")
+const User = db.sequelize.import(__dirname + "/models/user")
 
 app.get('/api/v1/users', (request, response) => {
     response.setHeader('content-type', 'application/json');
-    User.sync().then(() => {
     	User.findAll({raw: true}).then( (val) => {
         response.send(val)
-    });
-    	
     });
 });
 
@@ -30,11 +33,11 @@ app.post('/api/v1/login', (request, response) => {
         if (request.body.password == user.password) {
             response.send(200, {login: true});
         } else {
-            response.send(200, {login: false, error:'Incorrect Password'});
+            response.send(401, {login: false, error:'Incorrect Password'});
         }
     }).catch( () => {
         console.log("No user found deadass");
-        response.send(200, {login: false, error:'No user found'});
+        response.send(400, {login: false, error:'No user found'});
     });
     	
     });
@@ -47,13 +50,13 @@ myRouter.route('/api/v1/user')
     	User.sync().then(() => {
     		User.create({
     	    username: request.body.username, 
-        	password: request.body.password, 
-        	local_key: "ono"
+        	password: request.body.password
+//        	local_key: "ono"
         	
         }).then( (user) => {
             response.send(201, {created: true});
         }).catch( (err) => {
-            response.send(200, {created: false, error: err});
+            response.send(400, {created: false, error: err});
         });
     });
     	
@@ -63,9 +66,10 @@ myRouter.route('/api/v1/user')
     
 })
 .delete(function(request , response){
-	response.json({message : "Suppresion d'un user selon son ID", 
-		  id : request.body.id,
-		  methode : request.method});
+	response.setHeader('content-type', 'application/json');
+//	response.json({message : "Suppresion d'un user selon son ID", 
+//		  id : request.body.id,
+//		  methode : request.method});
 	
 	User.sync().then(() => {
 	  User.destroy({
@@ -73,19 +77,20 @@ myRouter.route('/api/v1/user')
 	    id: request.body.id
 	  }
 	}).then( (user) => {
-        response.send(201, {deleted: true});
+        response.send(204, {deleted: true});
     }).catch( (err) => {
-        response.send(200, {deleted: false, error: err});
+        response.send(400, {deleted: false, error: err});
     });
 	
 	});
 })
 .put(function(request , response) {
-	response.json({message : "Modification d'un user selon son ID", 
-		  id : request.body.id ,
-		  username : request.body.username,
-		  password : request.body.password,
-		  methode : request.method});
+	response.setHeader('content-type', 'application/json');
+//	response.json({message : "Modification d'un user selon son ID", 
+//		  id : request.body.id ,
+//		  username : request.body.username,
+//		  password : request.body.password,
+//		  methode : request.method});
 	
 	
 	User.sync().then(() => {
@@ -99,9 +104,9 @@ myRouter.route('/api/v1/user')
 			
 		}
 	}).then( (user) => {
-        response.send(201, {modified: true});
+        response.send(204, {modified: true});
     }).catch( (err) => {
-        response.send(200, {modified: false, error: err});
+        response.send(400, {modified: false, error: err});
     });
 		
 	});
